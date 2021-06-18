@@ -1,21 +1,62 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import * as React from "react";
+import { Text, View } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+
+import HomeScreen from "./screens/HomeScreen";
+import LocationScreen from "./screens/LocationScreen";
+import AccountScreen from "./screens/AccountScreen";
+
+import { FontAwesome, FontAwesome5, Entypo } from "@expo/vector-icons";
+
+const Tab = createBottomTabNavigator();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Tab.Navigator
+        initialRouteName="Home"
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
+
+            //Set the icon based on which route it is (name of the tab)
+            if (route.name === "Home") {
+              return <FontAwesome5 name="car-alt" size={size} color={color} />;
+            } else if (route.name === "Location") {
+              return <Entypo name="location-pin" size={size} color={color} />;
+            } else if (route.name === "Account") {
+              return <FontAwesome name="user" size={size} color={color} />;
+            }
+          },
+
+          tabBarLabel: ({ focused, color, size }) => {
+            //returns the route name only if this tab is focused
+            return (
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontWeight: "600",
+                  color: "powderblue",
+                }}
+              >
+                {focused ? route.name : ""}
+              </Text>
+            );
+          },
+        })}
+        tabBarOptions={{
+          activeTintColor: "powderblue",
+          inactiveTintColor: "white",
+          activeBackgroundColor: "white",
+          inactiveBackgroundColor: "powderblue",
+          labelPosition: "below-icon",
+        }}
+      >
+        <Tab.Screen name="Location" component={LocationScreen} />
+        <Tab.Screen name="Home" component={HomeScreen} />
+        <Tab.Screen name="Account" component={AccountScreen} />
+      </Tab.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
