@@ -37,7 +37,7 @@ export default function App() {
                 style={{
                   fontSize: 14,
                   fontWeight: "600",
-                  color: "powderblue",
+                  color: "#4169E1",
                 }}
               >
                 {focused ? route.name : ""}
@@ -46,10 +46,10 @@ export default function App() {
           },
         })}
         tabBarOptions={{
-          activeTintColor: "powderblue",
+          activeTintColor: "#4169E1",
           inactiveTintColor: "white",
           activeBackgroundColor: "white",
-          inactiveBackgroundColor: "powderblue",
+          inactiveBackgroundColor: "#4169E1",
           labelPosition: "below-icon",
         }}
       >

@@ -9,44 +9,144 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { List, Card, Paragraph, Title, ProgressBar } from "react-native-paper";
-import { FontAwesome, FontAwesome5, Entypo } from "@expo/vector-icons";
+import {
+  FontAwesome,
+  FontAwesome5,
+  Entypo,
+  MaterialIcons,
+  Feather,
+} from "@expo/vector-icons";
+
+//var carCharging = false;
+//var carParked = true;
+var completionTime = "1h20m";
+var chargePercentage = 0.75;
+//var carQueueing = false;
+
+var parkLocation = "VivoCity Multi-Storey Carpark";
+var parkLevel = "Level 4";
+var parkZone = "Zone C";
+var parkLot = "Lot 35";
+
+var queueNumber = 1;
+var startTime = "1:24PM";
+var endTime = "3:17PM";
 
 function HomeScreen({ navigation }) {
   let windowWidth = Dimensions.get("window").width;
+  let chargingMessage, timeMessage;
+
+  const [carCharging, setCarCharging] = useState(false);
+  const [carParked, setCarParked] = useState(true);
+  const [carQueueing, setCarQueueing] = useState(false);
+
+  if (carCharging) {
+    chargingMessage = "Currently Charging";
+    timeMessage = completionTime + " to full charge";
+  } else if (!carParked) {
+    chargingMessage = "Not Parked";
+    timeMessage = "";
+  } else if (carParked && carQueueing) {
+    chargingMessage = "Currently In Queue";
+    timeMessage = completionTime + " to full charge";
+  } else if (carParked && !carQueueing) {
+    chargingMessage = "Not Charging";
+    timeMessage = "";
+  }
+
+  const changeChargeState = () => {
+    if (carCharging) {
+      setCarCharging(false);
+      setCarQueueing(false);
+    } else if (carParked && !carCharging && queueNumber == 1) {
+      setCarCharging(true);
+      setCarQueueing(true);
+    } else if (carParked && !carCharging && queueNumber != 1 && !carQueueing) {
+      setCarCharging(false);
+      setCarQueueing(true);
+    } else if (carParked && !carCharging && queueNumber != 1 && carQueueing) {
+      setCarCharging(false);
+      setCarQueueing(false);
+    }
+
+    if (carCharging) {
+      chargingMessage = "Currently Charging";
+      timeMessage = completionTime + " to full charge";
+    } else if (!carParked) {
+      chargingMessage = "Not Parked";
+      timeMessage = "";
+    } else if (carParked && carQueueing) {
+      chargingMessage = "Currently In Queue";
+      timeMessage = completionTime + " to full charge";
+    } else if (carParked && !carQueueing) {
+      chargingMessage = "Not Charging";
+      timeMessage = "";
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
         <Card style={styles.card}>
           <Card.Content>
-            <Title style={styles.title}> Time to Charge Complete: </Title>
-            <Text style={styles.subtitle}>___________</Text>
-
-            <Paragraph style={styles.title}></Paragraph>
-            <Paragraph>Hello world</Paragraph>
+            <Text style={styles.title}>{chargingMessage}</Text>
+            <Text style={styles.title}>{timeMessage}</Text>
           </Card.Content>
           <Card.Content>
-            <TouchableOpacity
-              onPress={() => navigation.navigate("Current Charge")}
-            >
-              <FontAwesome5
-                name="car-alt"
-                style={styles.carvector}
-                size={windowWidth * 0.75}
-                resizeMode="contain"
-              />
+            <TouchableOpacity onPress={changeChargeState}>
+              {carCharging && (
+                <Feather
+                  name="battery-charging"
+                  style={styles.batteryvectoron}
+                  size={windowWidth * 0.08}
+                />
+              )}
+              {!carCharging && (
+                <Feather
+                  name="battery-charging"
+                  style={styles.batteryvectoroff}
+                  size={windowWidth * 0.08}
+                />
+              )}
             </TouchableOpacity>
-
+            <MaterialIcons
+              name="directions-car"
+              style={styles.carvector}
+              size={windowWidth * 0.55}
+              resizeMode="contain"
+            ></MaterialIcons>
             <ProgressBar
-              style={{ marginTop: 30 }}
-              progress={0.75}
-              color="blue"
+              style={{ marginTop: 5 }}
+              progress={chargePercentage}
+              color="#4169E1"
             ></ProgressBar>
-            <Text style={styles.subtitle}>__% Charged</Text>
+            <Text style={styles.subtitle}>
+              {chargePercentage * 100 + "% Charged"}
+            </Text>
           </Card.Content>
         </Card>
         <Card style={styles.card}>
           <Card.Content>
-            <Text style={styles.subtitle}>Insert Location Here</Text>
+            <Title style={styles.title}>{parkLocation}</Title>
+            <Text style={styles.subtitle}>{parkLevel + " " + parkZone}</Text>
+            <Text style={styles.subtitle}>{parkLot}</Text>
+          </Card.Content>
+          <Card.Content>
+            <SafeAreaView style={styles.tablecolumn}>
+              <SafeAreaView style={styles.tablerow}>
+                <Text style={styles.tableitemheader}>Queue:</Text>
+                <Text style={styles.tableitemcontent}>{queueNumber}</Text>
+              </SafeAreaView>
+              <SafeAreaView style={styles.tablerow}>
+                <Text style={styles.tableitemheader}>Start:</Text>
+                <Text style={styles.tableitemcontent}>{startTime}</Text>
+              </SafeAreaView>
+
+              <SafeAreaView style={styles.tablerow}>
+                <Text style={styles.tableitemheader}>Finish:</Text>
+                <Text style={styles.tableitemcontent}>{endTime}</Text>
+              </SafeAreaView>
+            </SafeAreaView>
           </Card.Content>
         </Card>
         <List.Section title="Frequently Asked Questions">
@@ -65,96 +165,57 @@ function HomeScreen({ navigation }) {
   );
 }
 
-function currentChargeScreen({ navigation }) {
-  let windowWidth = Dimensions.get("window").width;
-  return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView>
-        <Card style={styles.card}>
-          <Card.Content>
-            <Title style={styles.title}> Main Location </Title>
-            <Text style={styles.subtitle}>Level and Zone</Text>
-            <Text style={styles.subtitle}>Lot Number</Text>
-
-            <Paragraph style={styles.title}></Paragraph>
-            <Paragraph>Hello world</Paragraph>
-          </Card.Content>
-          <Card.Content>
-            <SafeAreaView style={styles.tablecolumn}>
-              <SafeAreaView style={styles.tablerow}>
-                <Text style={styles.tableitemheader}>Queue:</Text>
-                <Text style={styles.tableitemcontent}>Queue Number</Text>
-              </SafeAreaView>
-              <SafeAreaView style={styles.tablerow}>
-                <Text style={styles.tableitemheader}>Start:</Text>
-                <Text style={styles.tableitemcontent}>Start Time</Text>
-              </SafeAreaView>
-
-              <SafeAreaView style={styles.tablerow}>
-                <Text style={styles.tableitemheader}>Finish:</Text>
-                <Text style={styles.tableitemcontent}>Finish Time</Text>
-              </SafeAreaView>
-            </SafeAreaView>
-          </Card.Content>
-          <Card.Content>
-            <FontAwesome5
-              name="car-alt"
-              style={styles.carvector}
-              size={windowWidth * 0.75}
-              resizeMode="contain"
-            />
-
-            <ProgressBar
-              style={{ marginTop: 30 }}
-              progress={0.75}
-              color="blue"
-            ></ProgressBar>
-            <Text style={styles.subtitle}>__% Charged</Text>
-          </Card.Content>
-        </Card>
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
-
 const Stack = createStackNavigator();
 
 export default function HomeStack() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: "#4169E1" },
+        headerTintColor: "white",
+      }}
+    >
       <Stack.Screen name="Home" component={HomeScreen}></Stack.Screen>
-      <Stack.Screen
-        name="Current Charge"
-        component={currentChargeScreen}
-      ></Stack.Screen>
     </Stack.Navigator>
   );
 }
+
+function carPress() {}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
   title: {
-    fontSize: 30,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginTop: 20,
-  },
-  subtitle: {
     fontSize: 20,
     fontWeight: "bold",
     textAlign: "center",
     marginTop: 10,
   },
+  subtitle: {
+    fontSize: 15,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginTop: 10,
+  },
   card: {
-    marginTop: 20,
+    marginTop: 10,
     marginLeft: 15,
     marginRight: 15,
   },
   carvector: {
     alignSelf: "center",
-    color: "blue",
+    color: "#4169E1",
+    flex: 1,
+  },
+  batteryvectoron: {
+    alignSelf: "center",
+    color: "green",
+    flex: 1,
+  },
+  batteryvectoroff: {
+    alignSelf: "center",
+    color: "red",
     flex: 1,
   },
   tablecolumn: {
@@ -165,6 +226,7 @@ const styles = StyleSheet.create({
     alignItems: "center", //x-axis
     margin: 10,
     borderRadius: 20,
+    backgroundColor: "lightgrey",
   },
   tablerow: {
     padding: 100, //inner spacing
