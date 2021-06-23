@@ -17,11 +17,8 @@ import {
   Feather,
 } from "@expo/vector-icons";
 
-//var carCharging = false;
-//var carParked = true;
 var completionTime = "1h20m";
 var chargePercentage = 0.75;
-//var carQueueing = false;
 
 var parkLocation = "VivoCity Multi-Storey Carpark";
 var parkLevel = "Level 4";
@@ -86,7 +83,7 @@ function HomeScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
+      <ScrollView style={styles.minicontainer}>
         <Card style={styles.card}>
           <Card.Content>
             <Text style={styles.title}>{chargingMessage}</Text>
@@ -94,20 +91,13 @@ function HomeScreen({ navigation }) {
           </Card.Content>
           <Card.Content>
             <TouchableOpacity onPress={changeChargeState}>
-              {carCharging && (
-                <Feather
-                  name="battery-charging"
-                  style={styles.batteryvectoron}
-                  size={windowWidth * 0.08}
-                />
-              )}
-              {!carCharging && (
-                <Feather
-                  name="battery-charging"
-                  style={styles.batteryvectoroff}
-                  size={windowWidth * 0.08}
-                />
-              )}
+              <Feather
+                name="battery-charging"
+                style={
+                  carCharging ? styles.batteryvectoron : styles.batteryvectoroff
+                }
+                size={windowWidth * 0.08}
+              />
             </TouchableOpacity>
             <MaterialIcons
               name="directions-car"
@@ -173,6 +163,7 @@ export default function HomeStack() {
       screenOptions={{
         headerStyle: { backgroundColor: "#4169E1" },
         headerTintColor: "white",
+        headerTitleStyle: { alignSelf: "center" },
       }}
     >
       <Stack.Screen name="Home" component={HomeScreen}></Stack.Screen>
@@ -180,11 +171,17 @@ export default function HomeStack() {
   );
 }
 
-function carPress() {}
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  botcontainer: {
+    flex: 0,
+    backgroundColor: "#4169E1",
+  },
+  minicontainer: {
+    flex: 1,
+    backgroundColor: "white",
   },
   title: {
     fontSize: 20,
