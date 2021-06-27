@@ -9,13 +9,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { List, Card, Paragraph, Title, ProgressBar } from "react-native-paper";
-import {
-  FontAwesome,
-  FontAwesome5,
-  Entypo,
-  MaterialIcons,
-  Feather,
-} from "@expo/vector-icons";
+import { MaterialIcons, AntDesign } from "@expo/vector-icons";
 
 var completionTime = "1h20m";
 var chargePercentage = 0.75;
@@ -38,45 +32,35 @@ function HomeScreen({ navigation }) {
   const [carQueueing, setCarQueueing] = useState(false);
 
   if (carCharging) {
-    chargingMessage = "Currently Charging";
+    chargingMessage = "Press Car to Cancel Charging";
     timeMessage = completionTime + " to full charge";
-  } else if (!carParked) {
-    chargingMessage = "Not Parked";
-    timeMessage = "";
   } else if (carParked && carQueueing) {
-    chargingMessage = "Currently In Queue";
+    chargingMessage = "Press Car to Cancel Queueing";
     timeMessage = completionTime + " to full charge";
-  } else if (carParked && !carQueueing) {
-    chargingMessage = "Not Charging";
+  } else {
+    chargingMessage = "Press Car to Start Charging";
     timeMessage = "";
   }
-
   const changeChargeState = () => {
     if (carCharging) {
       setCarCharging(false);
       setCarQueueing(false);
-    } else if (carParked && !carCharging && queueNumber == 1) {
+    } else if (carParked && !carCharging && queueNumber == 0) {
       setCarCharging(true);
       setCarQueueing(true);
-    } else if (carParked && !carCharging && queueNumber != 1 && !carQueueing) {
+    } else if (carParked && !carCharging && queueNumber != 0 && !carQueueing) {
       setCarCharging(false);
       setCarQueueing(true);
-    } else if (carParked && !carCharging && queueNumber != 1 && carQueueing) {
+    } else if (carParked && !carCharging && queueNumber != 0 && carQueueing) {
       setCarCharging(false);
       setCarQueueing(false);
     }
 
     if (carCharging) {
-      chargingMessage = "Currently Charging";
       timeMessage = completionTime + " to full charge";
-    } else if (!carParked) {
-      chargingMessage = "Not Parked";
-      timeMessage = "";
     } else if (carParked && carQueueing) {
-      chargingMessage = "Currently In Queue";
       timeMessage = completionTime + " to full charge";
-    } else if (carParked && !carQueueing) {
-      chargingMessage = "Not Charging";
+    } else {
       timeMessage = "";
     }
   };
@@ -86,25 +70,53 @@ function HomeScreen({ navigation }) {
       <ScrollView style={styles.minicontainer}>
         <Card style={styles.card}>
           <Card.Content>
-            <Text style={styles.title}>{chargingMessage}</Text>
-            <Text style={styles.title}>{timeMessage}</Text>
-          </Card.Content>
-          <Card.Content>
+            <Text style={styles.chargemessage}>{chargingMessage}</Text>
             <TouchableOpacity onPress={changeChargeState}>
-              <Feather
-                name="battery-charging"
-                style={
-                  carCharging ? styles.batteryvectoron : styles.batteryvectoroff
-                }
-                size={windowWidth * 0.08}
-              />
+              <MaterialIcons
+                name="directions-car"
+                style={styles.carvector}
+                size={windowWidth * 0.55}
+                resizeMode="contain"
+              ></MaterialIcons>
             </TouchableOpacity>
-            <MaterialIcons
-              name="directions-car"
-              style={styles.carvector}
-              size={windowWidth * 0.55}
-              resizeMode="contain"
-            ></MaterialIcons>
+            <SafeAreaView style={styles.statuscolumn}>
+              <SafeAreaView
+                style={carParked ? styles.statusrowon : styles.statusrowoff}
+              >
+                <Text style={styles.tableitemcontent}>Parked</Text>
+                <AntDesign
+                  name={carParked ? "checkcircleo" : "closecircleo"}
+                  style={styles.statusicons}
+                  size={25}
+                >
+                  {" "}
+                </AntDesign>
+              </SafeAreaView>
+              <SafeAreaView
+                style={carCharging ? styles.statusrowon : styles.statusrowoff}
+              >
+                <Text style={styles.tableitemcontent}>Charging</Text>
+                <AntDesign
+                  name={carCharging ? "checkcircleo" : "closecircleo"}
+                  style={styles.statusicons}
+                  size={25}
+                >
+                  {" "}
+                </AntDesign>
+              </SafeAreaView>
+              <SafeAreaView
+                style={carQueueing ? styles.statusrowon : styles.statusrowoff}
+              >
+                <Text style={styles.tableitemcontent}>Queueing</Text>
+                <AntDesign
+                  name={carQueueing ? "checkcircleo" : "closecircleo"}
+                  style={styles.statusicons}
+                  size={25}
+                >
+                  {" "}
+                </AntDesign>
+              </SafeAreaView>
+            </SafeAreaView>
             <ProgressBar
               style={{ marginTop: 5 }}
               progress={chargePercentage}
@@ -113,6 +125,7 @@ function HomeScreen({ navigation }) {
             <Text style={styles.subtitle}>
               {chargePercentage * 100 + "% Charged"}
             </Text>
+            <Text style={styles.title}>{timeMessage}</Text>
           </Card.Content>
         </Card>
         <Card style={styles.card}>
@@ -124,32 +137,24 @@ function HomeScreen({ navigation }) {
           <Card.Content>
             <SafeAreaView style={styles.tablecolumn}>
               <SafeAreaView style={styles.tablerow}>
-                <Text style={styles.tableitemheader}>Queue:</Text>
+                <Text style={styles.tableitemheader}>Queue</Text>
                 <Text style={styles.tableitemcontent}>{queueNumber}</Text>
               </SafeAreaView>
               <SafeAreaView style={styles.tablerow}>
-                <Text style={styles.tableitemheader}>Start:</Text>
-                <Text style={styles.tableitemcontent}>{startTime}</Text>
+                <Text style={styles.tableitemheader}>Start</Text>
+                <Text style={styles.tableitemcontent}>
+                  {carCharging ? startTime : "\n"}
+                </Text>
               </SafeAreaView>
-
               <SafeAreaView style={styles.tablerow}>
-                <Text style={styles.tableitemheader}>Finish:</Text>
-                <Text style={styles.tableitemcontent}>{endTime}</Text>
+                <Text style={styles.tableitemheader}>Finish</Text>
+                <Text style={styles.tableitemcontent}>
+                  {carCharging ? endTime : "\n"}
+                </Text>
               </SafeAreaView>
             </SafeAreaView>
           </Card.Content>
         </Card>
-        <List.Section title="Frequently Asked Questions">
-          <List.Accordion title="What is this for?">
-            <List.Item title="We celebrate the birth of potatoes." />
-          </List.Accordion>
-          <List.Accordion title="When will this be?">
-            <List.Item title="Whenever this pandemic is over." />
-          </List.Accordion>
-          <List.Accordion title="Where will this be?">
-            <List.Item title="Ireland" />
-          </List.Accordion>
-        </List.Section>
       </ScrollView>
     </SafeAreaView>
   );
@@ -195,6 +200,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 10,
   },
+  chargemessage: {
+    fontSize: 15,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
   card: {
     marginTop: 10,
     marginLeft: 15,
@@ -223,7 +233,7 @@ const styles = StyleSheet.create({
     alignItems: "center", //x-axis
     margin: 10,
     borderRadius: 20,
-    backgroundColor: "lightgrey",
+    backgroundColor: "cornflowerblue",
   },
   tablerow: {
     padding: 100, //inner spacing
@@ -238,28 +248,47 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     textAlign: "center",
-    marginTop: 10,
+    marginTop: 5,
+    marginBottom: 5,
   },
   tableitemcontent: {
     fontSize: 15,
     fontWeight: "bold",
     textAlign: "center",
     marginTop: 10,
+    marginBottom: 10,
+  },
+  statuscolumn: {
+    padding: 100, //inner spacing
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between", //y-axis
+    alignItems: "center", //x-axis
+    margin: 10,
+    borderRadius: 20,
+  },
+  statusrowoff: {
+    padding: 100, //inner spacing
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "center", //y-axis
+    alignItems: "center", //x-axis
+    margin: 10,
+    borderRadius: 20,
+    backgroundColor: "lightgrey",
+  },
+  statusrowon: {
+    padding: 100, //inner spacing
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "center", //y-axis
+    alignItems: "center", //x-axis
+    margin: 10,
+    borderRadius: 20,
+    backgroundColor: "cornflowerblue",
+  },
+  statusicons: {
+    flex: 1,
+    alignSelf: "center",
   },
 });
-
-const dataArray = [
-  {
-    title: "What is this?",
-    content: "Exactly what the title says. A basket throwing competition!",
-  },
-  {
-    title: "Who is this by?",
-    content:
-      "The International Society of Basket Throwers (ISBT). We love throwing baskets.",
-  },
-  {
-    title: "Why is this?",
-    content: "Because baskets! Wheee!",
-  },
-];

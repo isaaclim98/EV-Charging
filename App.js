@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Text, View } from "react-native";
+import { Text } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
@@ -8,6 +8,7 @@ import LocationScreen from "./screens/LocationScreen";
 import AccountScreen from "./screens/AccountScreen";
 
 import { FontAwesome, FontAwesome5, Entypo } from "@expo/vector-icons";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Tab = createBottomTabNavigator();
 
