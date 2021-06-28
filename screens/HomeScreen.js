@@ -12,43 +12,46 @@ import {
 import { List, Card, Paragraph, Title, ProgressBar } from "react-native-paper";
 import { MaterialIcons, AntDesign } from "@expo/vector-icons";
 
-import useInterval from "../App.js";
-import { queue } from "async";
+import moment from "moment";
 
-var completionTime = "?";
+var chargePercentage = 80;
+var queueNumber = 1;
+var timePerCar = 20;
+
+var completionTime = 100 - chargePercentage;
 var queueTime = "?";
-
-var chargePercentage = 90;
-var queueNumber = 0;
-var timePerCar = 30;
 
 var timeTracker = timePerCar;
 
-var parkLocation = "VivoCity Multi-Storey Carpark";
+var parkLocation = "VivoCity Carpark";
 var parkLevel = "Level 4";
-var parkZone = "Zone C";
-var parkLot = "Lot 35";
+var parkZone = "Zone A";
+var parkLot = "Lot 6";
 
 function HomeScreen({ navigation }) {
   let windowWidth = Dimensions.get("window").width;
   let chargingMessage, timeMessage;
 
   const [carCharging, setCarCharging] = useState(false);
-  const [carParked, setCarParked] = useState(false);
+  const [carParked, setCarParked] = useState(true);
   const [carQueueing, setCarQueueing] = useState(false);
 
-  const [startTime, setStartTime] = useState(new Date().toLocaleString());
-  const [endTime, setEndTime] = useState(new Date().toLocaleString());
-  const [pressTime, setPressTime] = useState(new Date().toLocaleString());
-  const [currentTime, setCurrentTime] = useState(new Date().toLocaleString());
+  const [startTime, setStartTime] = useState(
+    new moment().format("Do MMM, h:mm:ss A")
+  );
+  const [endTime, setEndTime] = useState(
+    new moment().format("Do MMM, h:mm:ss A")
+  );
+  const [pressTime, setPressTime] = useState(
+    new moment().format("Do MMM, h:mm:ss A")
+  );
+  const [currentTime, setCurrentTime] = useState(
+    new moment().format("Do MMM, h:mm:ss A")
+  );
 
   if (carCharging) {
     chargingMessage = "Press Car to Cancel Charging";
-    if (completionTime == "?") {
-      timeMessage = "Calculating time to full charge...";
-    } else {
-      timeMessage = completionTime + "s to full charge";
-    }
+    timeMessage = completionTime + "s to full charge";
   } else if (carParked && carQueueing) {
     chargingMessage = "Press Car to Cancel Queueing";
     if (queueTime == "?") {
@@ -71,7 +74,9 @@ function HomeScreen({ navigation }) {
       setCarQueueing(true);
 
       setStartTime(currentTime);
-      setEndTime(currentTime + completionTime);
+      setEndTime(
+        moment().add(completionTime, "seconds").format("Do MMM, h:mm:ss A")
+      );
     } else if (carParked && !carCharging && queueNumber != 0 && !carQueueing) {
       setCarCharging(false);
       setCarQueueing(true);
@@ -95,7 +100,7 @@ function HomeScreen({ navigation }) {
 
   useEffect(() => {
     let secTimer = setInterval(() => {
-      setCurrentTime(new Date().toLocaleString());
+      setCurrentTime(new moment().format("Do MMM, h:mm:ss A"));
     }, 1000);
 
     return () => clearInterval(secTimer);
@@ -122,6 +127,11 @@ function HomeScreen({ navigation }) {
       if (queueNumber == 0) {
         setCarCharging(true);
         setCarQueueing(true);
+
+        setStartTime(currentTime);
+        setEndTime(
+          moment().add(completionTime, "seconds").format("Do MMM, h:mm:ss A")
+        );
       }
     }
   }, [currentTime]);
@@ -131,7 +141,6 @@ function HomeScreen({ navigation }) {
       <ScrollView style={styles.minicontainer}>
         <Card style={styles.card}>
           <Card.Content>
-            <Text style={styles.chargemessage}>{currentTime}</Text>
             <Text style={styles.chargemessage}>{chargingMessage}</Text>
             <TouchableOpacity onPress={changeChargeState}>
               <MaterialIcons

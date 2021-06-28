@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import {
   Text,
   View,
@@ -11,7 +11,8 @@ import {
 } from "react-native";
 import { SearchBar } from "react-native-elements";
 import { createStackNavigator } from "@react-navigation/stack";
-const carpark_image = require("../assets/carpark.png");
+
+const carpark_image = require("../assets/carpark_zones.png");
 
 const Stack = createStackNavigator();
 
@@ -118,8 +119,9 @@ function LocationScreen({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.minicontainer}>
+    <Fragment>
+      <SafeAreaView style={styles.minicontainer}></SafeAreaView>
+      <SafeAreaView style={styles.container}>
         <SearchBar
           round
           searchIcon={{ size: 24 }}
@@ -147,9 +149,10 @@ function LocationScreen({ navigation }) {
           keyExtractor={(item, index) => index.toString()}
           ItemSeparatorComponent={ItemSeparatorView}
           renderItem={ItemView}
+          ListFooterComponent={<View style={styles.minicontainer}></View>}
         />
-      </ScrollView>
-    </SafeAreaView>
+      </SafeAreaView>
+    </Fragment>
   );
 }
 
@@ -204,16 +207,17 @@ function LocationSecondScreen({ navigation, route }) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.minicontainer}>
+    <Fragment>
+      <SafeAreaView style={styles.minicontainer}></SafeAreaView>
+      <SafeAreaView style={styles.container}>
         <FlatList
           data={levelDataSource}
           keyExtractor={(item, index) => index.toString()}
           ItemSeparatorComponent={ItemSeparatorView}
           renderItem={ItemView}
         />
-      </ScrollView>
-    </SafeAreaView>
+      </SafeAreaView>
+    </Fragment>
   );
 }
 
@@ -221,69 +225,187 @@ function LocationThirdScreen({ navigation, route }) {
   const { itemID, itemTitle } = route.params;
   const [zoneDataSource, setZoneDataSource] = useState([]);
 
-  const zoneList = [
-    { id: 1, title: "Zone A" },
-    { id: 2, title: "Zone B" },
-    { id: 3, title: "Zone C" },
-    { id: 4, title: "Zone D" },
-    { id: 5, title: "Zone E" },
-    { id: 6, title: "Zone F" },
-    { id: 7, title: "Zone G" },
-  ];
-
-  useEffect(() => {
-    setZoneDataSource(zoneList);
-  }, []);
-
-  const ItemView = ({ item }) => {
-    return (
-      // Flat List Item
-      <Text style={styles.itemStyle} onPress={() => getItem(item)}>
-        {item.title.toUpperCase()}
-      </Text>
-    );
-  };
-
-  const ItemSeparatorView = () => {
-    return (
-      // Flat List Item Separator
-      <View
-        style={{
-          height: 0.5,
-          width: "100%",
-          backgroundColor: "#C8C8C8",
-        }}
-      />
-    );
-  };
-
-  const getItem = (item) => {
-    // Function for click on an item
-    navigation.navigate("Third Screen", {
-      itemID: item.id,
-      itemTitle: item.title,
-    });
-  };
-
   return (
-    <SafeAreaView style={styles.container}>
-      <Image source={carpark_image} style={styles.backgroundimage}></Image>
-    </SafeAreaView>
+    <Fragment>
+      <SafeAreaView style={styles.minicontainer}></SafeAreaView>
+      <SafeAreaView style={styles.container}>
+        <Image source={carpark_image} style={styles.backgroundimage}></Image>
+        <Text
+          style={{
+            position: "absolute",
+            top: 200,
+            left: 50,
+            fontSize: 25,
+            fontWeight: "bold",
+            color: "white",
+            textAlign: "center",
+            textAlignVertical: "center",
+            alignSelf: "center",
+            justifyContent: "center",
+            alignContent: "center",
+            alignItems: "center",
+            flex: 1,
+          }}
+        >
+          Zone A
+        </Text>
+
+        <Text
+          style={{
+            position: "absolute",
+            top: 230,
+            left: 65,
+            fontSize: 25,
+            fontWeight: "bold",
+            color: "white",
+            textAlign: "center",
+            textAlignVertical: "center",
+            alignSelf: "center",
+            justifyContent: "center",
+            alignContent: "center",
+            alignItems: "center",
+            flex: 1,
+          }}
+        >
+          5/10
+        </Text>
+
+        <Text
+          style={{
+            position: "absolute",
+            bottom: 230,
+            left: 50,
+            fontSize: 25,
+            fontWeight: "bold",
+            color: "white",
+            textAlign: "center",
+            textAlignVertical: "center",
+            alignSelf: "center",
+            justifyContent: "center",
+            alignContent: "center",
+            alignItems: "center",
+            flex: 1,
+          }}
+        >
+          Queue:
+        </Text>
+
+        <Text
+          style={{
+            position: "absolute",
+            bottom: 200,
+            left: 80,
+            fontSize: 25,
+            fontWeight: "bold",
+            color: "white",
+            textAlign: "center",
+            textAlignVertical: "center",
+            alignSelf: "center",
+            justifyContent: "center",
+            alignContent: "center",
+            alignItems: "center",
+            flex: 1,
+          }}
+        >
+          5
+        </Text>
+
+        <Text
+          style={{
+            position: "absolute",
+            top: 200,
+            right: 50,
+            fontSize: 25,
+            fontWeight: "bold",
+            color: "white",
+            textAlign: "center",
+            textAlignVertical: "center",
+            alignSelf: "center",
+            justifyContent: "center",
+            alignContent: "center",
+            alignItems: "center",
+            flex: 1,
+          }}
+        >
+          Zone B
+        </Text>
+
+        <Text
+          style={{
+            position: "absolute",
+            top: 230,
+            right: 65,
+            fontSize: 25,
+            fontWeight: "bold",
+            color: "white",
+            textAlign: "center",
+            textAlignVertical: "center",
+            alignSelf: "center",
+            justifyContent: "center",
+            alignContent: "center",
+            alignItems: "center",
+            flex: 1,
+          }}
+        >
+          2/10
+        </Text>
+
+        <Text
+          style={{
+            position: "absolute",
+            bottom: 230,
+            right: 50,
+            fontSize: 25,
+            fontWeight: "bold",
+            color: "white",
+            textAlign: "center",
+            textAlignVertical: "center",
+            alignSelf: "center",
+            justifyContent: "center",
+            alignContent: "center",
+            alignItems: "center",
+            flex: 1,
+          }}
+        >
+          Queue:
+        </Text>
+
+        <Text
+          style={{
+            position: "absolute",
+            bottom: 200,
+            right: 80,
+            fontSize: 25,
+            fontWeight: "bold",
+            color: "white",
+            textAlign: "center",
+            textAlignVertical: "center",
+            alignSelf: "center",
+            justifyContent: "center",
+            alignContent: "center",
+            alignItems: "center",
+            flex: 1,
+          }}
+        >
+          8
+        </Text>
+      </SafeAreaView>
+    </Fragment>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#4169E1",
+    backgroundColor: "white",
   },
   itemStyle: {
     padding: 10,
     backgroundColor: "white",
   },
   minicontainer: {
-    flex: 1,
-    backgroundColor: "white",
+    flex: 0,
+    backgroundColor: "#4169E1",
   },
   backgroundimage: {
     flex: 1,
